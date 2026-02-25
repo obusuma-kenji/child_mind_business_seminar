@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【公式】ビジネス思考アップグレード体験</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            height: 250px;
+        }
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            background-color: #fdfbf7;
+        }
+        .btn-glow {
+            box-shadow: 0 0 15px rgba(20, 184, 166, 0.4);
+        }
+        @keyframes pulse-soft {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 0.5; }
+        }
+        .animate-pulse-soft {
+            animation: pulse-soft 4s ease-in-out infinite;
+        }
+        .message-balloon {
+            position: relative;
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 2000;
+        }
+    </style>
+</head>
+<body class="text-stone-800 antialiased">
+
+    <div id="toast" class="toast">コピーしました</div>
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-stone-100 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-teal-600 text-2xl">✨</span>
+                <span class="font-bold text-lg tracking-tight text-stone-700">MindOS <span class="font-normal text-stone-400">Upgrade</span></span>
+            </div>
+            <div class="hidden md:flex gap-6 text-sm font-medium">
+                <a href="#mirrors" class="text-stone-500 hover:text-teal-600 transition">心の鏡</a>
+                <a href="#meditation" class="text-stone-500 hover:text-teal-600 transition">癒やしのワーク</a>
+                <a href="#workshop" class="text-stone-500 hover:text-teal-600 transition">解決の言葉</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="py-12 px-4 text-center max-w-3xl mx-auto">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-stone-800 mb-6 leading-tight">
+            「頑張っているのに報われない」を<br>
+            <span class="text-teal-600 underline decoration-teal-200 underline-offset-8">根本から変える</span>体験を。
+        </h1>
+        <p class="text-stone-500 leading-relaxed">
+            このページは、講師の鈴木サヤカ先生による心理学メソッドをいつでもどこでも体験できるように作られました。設定は不要です。画面の指示に従って進んでください。
+        </p>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 space-y-16 pb-20">
+
+        <!-- Simulation Consultant (Safe fallback for non-tech users) -->
+        <section id="mirrors" class="bg-teal-900 rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden text-white">
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-teal-800 rounded-full opacity-50"></div>
+            <div class="relative z-10">
+                <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center">心の鏡：お悩み診断 ✨</h2>
+                <p class="text-teal-100 text-center mb-10 text-sm md:text-base opacity-90">
+                    今、あなたが仕事や人間関係で感じている「モヤモヤ」を教えてください。<br>
+                    深層心理の専門家として、解決のヒントをお伝えします。
+                </p>
+                
+                <div class="max-w-2xl mx-auto">
+                    <div class="mb-6">
+                        <textarea id="consult-input" 
+                            class="w-full bg-teal-800/50 border border-teal-700 rounded-2xl p-4 text-white placeholder-teal-300/50 focus:ring-2 focus:ring-teal-400 outline-none transition h-32"
+                            placeholder="例：お金の話をするのが苦手です。部下が思うように動いてくれません。"></textarea>
+                    </div>
+                    <div class="flex justify-center">
+                        <button onclick="runConsultation()" id="consult-btn" 
+                            class="bg-white text-teal-900 font-bold px-12 py-4 rounded-full hover:bg-teal-50 transition transform hover:scale-105 btn-glow">
+                            専門家からの返信を受け取る
+                        </button>
+                    </div>
+
+                    <div id="consult-result" class="mt-12 hidden animate-fade-in">
+                        <div class="message-balloon text-stone-800 relative">
+                            <div id="consult-text" class="leading-relaxed whitespace-pre-line text-sm md:text-base"></div>
+                            <div class="mt-4 pt-4 border-t border-stone-100 flex justify-end">
+                                <button onclick="copyToClipboard('consult-text')" class="text-xs text-teal-600 font-bold uppercase tracking-widest px-3 py-1 border border-teal-100 rounded-lg hover:bg-teal-50 transition">診断結果を保存する</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Guided Meditation (Using Browser Voice) -->
+        <section id="meditation" class="bg-white rounded-[2.5rem] border border-stone-100 shadow-xl overflow-hidden">
+            <div class="md:flex">
+                <div class="md:w-3/5 p-8 md:p-12 bg-stone-50/50 flex flex-col items-center text-center">
+                    <div class="inline-block bg-teal-100 text-teal-700 px-4 py-1 rounded-full text-xs font-bold mb-4">体験型ワーク</div>
+                    <h2 class="text-2xl font-bold text-stone-800 mb-2 font-serif">インナーチャイルド癒やしの瞑想</h2>
+                    <p class="text-sm text-stone-400 mb-8 tracking-wide uppercase">Guided Audio Session</p>
+
+                    <div id="med-circle-container" onclick="toggleMeditation()" class="w-48 h-48 rounded-full bg-white border-8 border-stone-100 flex items-center justify-center relative cursor-pointer shadow-lg hover:shadow-teal-100/50 transition-all duration-500 mb-8">
+                        <div id="med-pulse" class="absolute inset-0 bg-teal-400/10 rounded-full hidden"></div>
+                        <div class="z-10">
+                            <span id="med-timer" class="text-4xl font-light text-stone-400 font-mono italic">Start</span>
+                        </div>
+                    </div>
+
+                    <div id="med-guidance" class="min-h-[100px] flex items-center justify-center italic text-stone-700 text-lg px-4 transition-opacity duration-500">
+                        「静かに深呼吸をして、心を落ち着かせましょう」
+                    </div>
+
+                    <div class="mt-8 flex items-center gap-4 w-full max-w-xs">
+                        <span class="text-[10px] font-bold text-stone-400 tracking-tighter">VOLUME</span>
+                        <input type="range" id="vol-slider" min="0" max="1" step="0.1" value="0.7" class="w-full h-1.5 bg-stone-200 rounded-lg appearance-none accent-teal-500 cursor-pointer">
+                    </div>
+                </div>
+
+                <!-- Action Items -->
+                <div class="md:w-2/5 p-8 border-t md:border-t-0 md:border-l border-stone-100">
+                    <h3 class="font-bold text-stone-700 mb-6 flex items-center gap-2">📚 講師からのお知らせ</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-teal-50 rounded-2xl border border-teal-100">
+                            <h4 class="text-xs font-bold text-teal-600 mb-1 uppercase">Next Step</h4>
+                            <p class="text-[13px] text-teal-800 font-medium">心を整えたら、次はあなたの経験を本にしませんか？Kindle出版なら在庫リスクなく、世界中にあなたの言葉を届けられます。</p>
+                        </div>
+                        <div id="healing-message" class="hidden animate-fade-in">
+                            <div class="bg-white p-4 rounded-2xl shadow-sm border border-stone-100 italic text-stone-600 text-[13px] pr-8 relative">
+                                <span id="healing-text-box"></span>
+                            </div>
+                        </div>
+                        <button onclick="getHealingQuote()" class="w-full py-3 bg-stone-800 text-white rounded-xl text-xs font-bold hover:bg-stone-700 transition">
+                            今の自分に贈る言葉 ✨
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Visualization -->
+        <section id="theory" class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white p-8 rounded-[2rem] border border-stone-100 shadow-sm">
+                <h3 class="font-bold text-stone-700 mb-6">あなたの現実を作る「97%」</h3>
+                <div class="chart-container"><canvas id="icebergChart"></canvas></div>
+                <p class="text-[11px] text-stone-400 mt-4 text-center leading-relaxed">
+                    自覚できる意識はわずか3%。残りの97%（無意識）が今の現実を100%作り出しています。
+                </p>
+            </div>
+            <div class="bg-stone-800 p-8 rounded-[2rem] text-white shadow-xl flex flex-col justify-center">
+                <h3 class="font-bold mb-6 text-teal-400">大人脳へのアップグレード</h3>
+                <div id="mindset-cards-area" class="space-y-4"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="py-12 border-t border-stone-100 text-center">
+        <p class="text-stone-300 text-xs font-medium tracking-widest uppercase">Transforming the Child Mind for Business Success</p>
+    </footer>
+
+    <script>
+        // --- 1. Audio Logic (NO API KEY NEEDED) ---
+        const synth = window.speechSynthesis;
+        const guidanceScript = [
+            { time: 120, text: "大きく深呼吸をしてください。鼻から吸って、口からゆっくり吐き出します。" },
+            { time: 110, text: "ゆっくりと目を閉じましょう。周りの音は遠ざかり、私の声だけが優しく響きます。" },
+            { time: 100, text: "目の前に、少し疲れた顔をした、子供の頃の自分を思い浮かべてみてください。" },
+            { time: 90, text: "その子に、今のあなたから声をかけます。「今までよく頑張ってきたね。もう大丈夫だよ」" },
+            { time: 80, text: "「大人の私が助けに来たよ。あなたが本当はすごい力を持っていることを、私は知っているよ」" },
+            { time: 60, text: "その子をそっと抱きしめてあげてください。温かい安心感が体中に広がります。" },
+            { time: 30, text: "子供の自分に「ありがとう」と伝えて、そっと胸の中に返してあげましょう。" },
+            { time: 10, text: "ゆっくりと、自分のペースで目を開けてください。新しい世界が待っています。" }
+        ];
+
+        function announce(text) {
+            if (synth.speaking) synth.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            const voices = synth.getVoices();
+            // 日本語の自然な声を探す
+            utter.voice = voices.find(v => v.lang === 'ja-JP' && v.name.includes('Google')) || voices.find(v => v.lang === 'ja-JP') || voices[0];
+            utter.rate = 0.85; // ゆっくり
+            utter.pitch = 1.0;
+            utter.volume = parseFloat(document.getElementById('vol-slider').value);
+            synth.speak(utter);
+        }
+
+        // --- 2. Consultation Logic (Logic-based fallback) ---
+        function runConsultation() {
+            const input = document.getElementById('consult-input').value;
+            if (!input) return;
+
+            const btn = document.getElementById('consult-btn');
+            btn.innerText = "心を読み解いています...";
+            btn.disabled = true;
+
+            // セミナーロジックに基づく返信シミュレーション
+            setTimeout(() => {
+                let response = "診断結果：\n\nあなたのそのお悩みは、心の中にある『子供脳（チャイルド）』の未熟な回路が原因かもしれません。";
+                
+                if (input.includes("金") || input.includes("売") || input.includes("営業")) {
+                    response += "\n\n「お金を貰うのが悪い」という思いは、実は『自分は価値を提供できていない』という傲慢さと、相手を『支払う力のない弱者』だと見下す勘違いから生まれています。お金は感謝のエネルギーです。正当に受け取る責任を持ちましょう。";
+                } else if (input.includes("部下") || input.includes("夫") || input.includes("妻") || input.includes("人間関係")) {
+                    response += "\n\n「相手が動いてくれない」という不満は、あなたがかつて親に『察してほしい、やってくれて当たり前』と求めていた依存心の鏡です。まずは自分から動くこと、そして相手の存在に感謝することから始めましょう。";
+                } else {
+                    response += "\n\n「面倒くさい、忙しくなるのが嫌だ」という声が聞こえませんか？それは現状維持を望む子供脳の声です。未来の感動を手に入れるために、今の怠慢を捨てて一歩踏み出す時です。";
+                }
+                
+                response += "\n\n【アドバイス】\n毎日寝る前に、自分自身の子供脳に向かって「大丈夫、私がついているから。一緒に成長しよう」と語りかけてください。回路が書き換われば、現実は必ず変わります。";
+
+                document.getElementById('consult-text').innerText = response;
+                document.getElementById('consult-result').classList.remove('hidden');
+                document.getElementById('consult-result').scrollIntoView({ behavior: 'smooth' });
+                btn.innerText = "専門家からの返信を受け取る";
+                btn.disabled = false;
+                
+                // 初回だけ読み上げる
+                announce("あなたの診断結果が届きました。");
+            }, 1500);
+        }
+
+        // --- 3. UI Control ---
+        let medTimer = null;
+        let timeLeft = 120;
+
+        function toggleMeditation() {
+            const display = document.getElementById('med-timer');
+            const pulse = document.getElementById('med-pulse');
+            const guidance = document.getElementById('med-guidance');
+
+            if (medTimer) {
+                clearInterval(medTimer);
+                medTimer = null;
+                timeLeft = 120;
+                display.innerText = "Start";
+                pulse.classList.add('hidden');
+                guidance.innerText = "ワークを中断しました。";
+                synth.cancel();
+            } else {
+                pulse.classList.remove('hidden');
+                pulse.classList.add('animate-pulse-soft');
+                display.innerText = timeLeft;
+                
+                announce("これから癒やしのワークを始めます。目を閉じてください。");
+
+                medTimer = setInterval(() => {
+                    timeLeft--;
+                    display.innerText = timeLeft;
+
+                    const step = guidanceScript.find(s => s.time === timeLeft);
+                    if (step) {
+                        guidance.style.opacity = "0";
+                        setTimeout(() => {
+                            guidance.innerText = step.text;
+                            guidance.style.opacity = "1";
+                            announce(step.text);
+                        }, 500);
+                    }
+
+                    if (timeLeft <= 0) {
+                        clearInterval(medTimer);
+                        medTimer = null;
+                        display.innerText = "End";
+                        pulse.classList.add('hidden');
+                        guidance.innerText = "お疲れ様でした。心がリフレッシュされました。";
+                    }
+                }, 1000);
+            }
+        }
+
+        function getHealingQuote() {
+            const quotes = [
+                "あなたは、あなたが思っているよりもずっと強い存在です。",
+                "過去の自分を許し、未来の自分を信じましょう。",
+                "すべての問題は、あなたの成長のために起きています。",
+                "大丈夫。大人になった私が、あなたを最高の未来へ連れて行きます。"
+            ];
+            const q = quotes[Math.floor(Math.random() * quotes.length)];
+            const box = document.getElementById('healing-message');
+            const text = document.getElementById('healing-text-box');
+            text.innerText = q;
+            box.classList.remove('hidden');
+            announce(q);
+        }
+
+        function copyToClipboard(id) {
+            const text = document.getElementById(id).innerText;
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            const toast = document.getElementById('toast');
+            toast.style.opacity = "1";
+            setTimeout(() => { toast.style.opacity = "0"; }, 2000);
+        }
+
+        function scrollToSection(id) {
+            document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- 4. Charts & Content ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Chart
+            const ctx = document.getElementById('icebergChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['意識の全体像'],
+                    datasets: [
+                        { label: '顕在意識 (3%)', data: [3], backgroundColor: '#14b8a6', barThickness: 40 },
+                        { label: '潜在意識 (97%)', data: [97], backgroundColor: '#444', barThickness: 40 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { stacked: true, display: false }, y: { stacked: true, max: 100, display: false } }
+                }
+            });
+
+            // Mindset Cards
+            const container = document.getElementById('mindset-cards-area');
+            const items = [
+                { t: "姿勢", c: "怠慢・誰かにやってほしい", a: "自律・自分でやる" },
+                { t: "感情", c: "一喜一憂・現状維持", a: "論理・成長と未来" },
+                { t: "責任", c: "怖い・誰かのせいにする", a: "豊かさの対価・自分が原因" }
+            ];
+            container.innerHTML = items.map(i => `
+                <div class="border-b border-stone-700 pb-3">
+                    <div class="text-[10px] font-bold text-teal-400 mb-1 uppercase tracking-widest">${i.t}</div>
+                    <div class="grid grid-cols-2 text-[12px] gap-2">
+                        <div class="text-stone-400">子供脳: ${i.c}</div>
+                        <div class="text-white font-bold">大人脳: ${i.a}</div>
+                    </div>
+                </div>
+            `).join('');
+        });
+    </script>
+</body>
+</html>
